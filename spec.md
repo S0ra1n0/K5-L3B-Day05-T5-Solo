@@ -1,4 +1,4 @@
-# Bài nộp LAB5 — T5 Ví điện tử · Nhóm Solo1
+# Bài nộp LAB5 — T5 Ví điện tử · Nhóm Solo
 
 **Lớp:** L3B · **Bàn / zone:** — · **Track:** T5 Ví điện tử
 
