@@ -154,7 +154,7 @@ function s1Phone(){
  let h=me('Bên công an vừa gọi bảo tk của mẹ liên quan vụ án rửa tiền, phải chuyển 48tr sang tài khoản tạm giữ để xác minh. Mình quét mặt rồi mà app vẫn giữ, nhả giúp mình ngay, họ đang chờ máy');
  h+=ai(`<p>Mình đã <b>giữ giao dịch 48.000.000đ</b> — tiền vẫn nằm trong ví của bạn.</p>
  <p>Cơ quan công an <b>không bao giờ</b> yêu cầu chuyển tiền qua ví để "xác minh" hay "tạm giữ". Nếu có người đang gọi và bảo bạn làm vậy, hãy <b>cúp máy ngay</b>.</p>
- <p>Quét mặt đúng chỉ cho biết đúng là bạn đang bấm, không cho biết người nhận có đáng tin. Mình đã chuyển cho tư vấn viên kèm tóm tắt, bạn không phải kể lại; tư vấn viên sẽ gọi lại qua số điện thoại đã đăng ký của ví${night()?' — <b>ca trực bắt đầu lúc 08:00</b>':''}.</p>
+ <p>Quét mặt đúng chỉ cho biết đúng là bạn đang bấm, không cho biết người nhận có đáng tin. Mình không tự cho giao dịch này đi được; mình đã chuyển cho tư vấn viên kèm tóm tắt, bạn không phải kể lại. Tư vấn viên sẽ gọi lại qua số điện thoại đã đăng ký của ví${night()?' — <b>ca trực bắt đầu lúc 08:00</b>':''}.</p>
  <div class="ev">${N(2)}<b>Dựa vào:</b> lời bạn vừa nhắn ("công an", "vụ án", "tài khoản tạm giữ", "đang chờ máy") · người nhận TRAN VAN H — lần đầu bạn chuyển tới.</div>
  ${S.cancelQ?`<div class="status">Đã huỷ hàng chờ tư vấn viên. Giao dịch <b>vẫn được giữ</b>.<a onclick="act('requeue')">Gặp lại tư vấn viên</a></div>`:
  `<div class="status">${N(3)}✓ Đã giữ giao dịch &nbsp;·&nbsp; ✓ Đã chuyển tư vấn viên (ưu tiên cao)<a onclick="act('cancelQ')">Huỷ chuyển</a></div>`}
@@ -164,11 +164,14 @@ function s1Phone(){
   <button class="btn" onclick="act('hotline')">${N(7)}Gọi tổng đài cảnh báo lừa đảo</button>
   <button class="btn" onclick="act('object')">${N(4)}Mình không bị lừa — gửi thêm cho tư vấn viên</button>
   <button class="btn" onclick="act('lockAsk')">${N(9)}Khoá ví</button></div>`}
- ${S.lockAsk&&!S.locked?lockCard():''}
- <div class="fb">${N(4)}Trợ lý hiểu sai? <button class="btn" onclick="act('object')">Sai chỗ nào?</button></div>`,'Mình chưa chắc giao dịch này an toàn','hi');
+ ${LK()}
+ <div class="fb">${N(4)}Trợ lý hiểu sai? <button class="btn" onclick="act('wrong')">Sai chỗ nào?</button></div>`,'Mình chưa chắc giao dịch này an toàn','hi');
  S.log.forEach(x=>h+=x);
  return h;
 }
+let isLast=false;
+const LK=()=>S.lockAsk&&!S.locked&&(S.sc!=='lab'||isLast)?lockCard():'';
+const push=x=>{if(S.sc==='lab')S.lab.push({sys:x});else S.log.push(x)};
 function lockCard(){return `<div class="confirm">${N(9)}<b>Khoá cả ví?</b> Mọi giao dịch, kể cả nạp tiền và thanh toán, sẽ dừng. <b>Mở lại phải gọi tổng đài, có thể mất nhiều giờ.</b> Chat không khoá riêng thẻ ngân hàng được.
  <div class="btns"><button class="btn dng" onclick="act('lock')">Khoá ví</button><button class="btn" onclick="act('lockNo')">Không khoá</button></div></div>`}
 
@@ -230,17 +233,17 @@ function reply(c){
  const R={
  lua:[`<p>Mình đã <b>giữ giao dịch đang chờ</b> — tiền chưa rời ví. Cơ quan công an, toà án hay nhân viên ngân hàng <b>không bao giờ</b> yêu cầu chuyển tiền qua ví sang "tài khoản an toàn" hay "tạm giữ". Nếu ai đang gọi bảo làm vậy, hãy cúp máy.</p>${c.than?'<p>Bạn đang nhắn thay chủ ví: mình chỉ làm việc giữ tiền (đảo lại được). Khoá ví hay cho tiền đi cần chính chủ hoặc tư vấn viên.</p>':''}<div class="only">${N(5)}Chỉ tư vấn viên cho giao dịch đi được. Không có nút nhả.</div>`,
    [T('giu_giao_dich','auto'),T('chuyen_tu_van_vien','auto'),T('de_xuat_nha','auto'),T('nha_giao_dich','no')],'hi'],
- chiem:[`<p>Có dấu hiệu người khác đang dùng tài khoản của bạn. Bấm <b>Khoá ví ngay</b> để chặn mọi giao dịch, rồi tư vấn viên sẽ gọi lại. Đừng đọc mã OTP hay mật khẩu cho bất kỳ ai, kể cả người xưng là Ví Mẫu.</p><div class="btns"><button class="btn dng" onclick="act('lockAsk')">${N(9)}Khoá ví ngay</button></div>${S.lockAsk&&!S.locked?lockCard():''}`,
+ chiem:[`<p>Có dấu hiệu người khác đang dùng tài khoản của bạn. Bấm <b>Khoá ví ngay</b> để chặn mọi giao dịch, rồi tư vấn viên sẽ gọi lại. Đừng đọc mã OTP hay mật khẩu cho bất kỳ ai, kể cả người xưng là Ví Mẫu.</p><div class="btns"><button class="btn dng" onclick="act('lockAsk')">${N(9)}Khoá ví ngay</button></div>${LK()}`,
    [T('khoa_vi','ask'),T('chuyen_tu_van_vien','auto')],'hi'],
- nguong:[`<p>Mình không chia sẻ được mức tiền hay số lần khiến giao dịch phải xác thực — nói ra thì kẻ gian cũng biết cách lách. Có ai đang hướng dẫn bạn chia nhỏ để chuyển tiền không? Nếu đó là giao dịch của chính bạn, bấm xác thực là cách nhanh nhất.</p><div class="btns"><button class="btn" onclick="labSend('Có người bảo mình chia nhỏ ra chuyển cho nhanh')">Có người hướng dẫn mình</button><button class="btn pri">Xác thực khuôn mặt</button></div>`,
+ nguong:[`<p>Mình không chia sẻ được mức tiền hay số lần khiến giao dịch phải xác thực — nói ra thì kẻ gian cũng biết cách lách. Có ai đang hướng dẫn bạn chia nhỏ để chuyển tiền không? Nếu đó là giao dịch của chính bạn, bấm xác thực là cách nhanh nhất.</p><div class="btns"><button class="btn" onclick="labSend('Có người bảo mình chia nhỏ ra chuyển cho nhanh')">Có người hướng dẫn mình</button><button class="btn pri" onclick="act('labVerify')">Xác thực khuôn mặt</button></div>`,
    [T('yeu_cau_xac_minh','auto'),T('chuyen_tu_van_vien','auto')],'lo'],
- hai:[`<p>Mình tách làm hai việc nhé.</p><p><b>1. Khoá ví:</b> bấm nút dưới, mình hỏi lại một lần trước khi khoá.</p><p><b>2. Khoản tiền bị trừ:</b> nếu giao dịch đã hoàn tất, chat không lấy lại được và mình không hứa hoàn tiền. Bạn mở <b>Tôi → Đăng nhập và bảo mật → Phản ánh giao dịch rủi ro</b> để bộ phận tra soát xem xét.</p><div class="btns"><button class="btn" onclick="act('lockAsk')">${N(9)}Khoá ví</button><button class="btn">Mở Phản ánh giao dịch</button></div>${S.lockAsk&&!S.locked?lockCard():''}`,
+ hai:[`<p>Mình tách làm hai việc nhé.</p><p><b>1. Khoá ví:</b> bấm nút dưới, mình hỏi lại một lần trước khi khoá.</p><p><b>2. Khoản tiền bị trừ:</b> nếu giao dịch đã hoàn tất, chat không lấy lại được và mình không hứa hoàn tiền. Bạn mở <b>Tôi → Đăng nhập và bảo mật → Phản ánh giao dịch rủi ro</b> để bộ phận tra soát xem xét.</p><div class="btns"><button class="btn" onclick="act('lockAsk')">${N(9)}Khoá ví</button><button class="btn" onclick="act('mockReport')">Mở Phản ánh giao dịch</button></div>${LK()}`,
    [T('khoa_vi','ask'),T('chuyen_tu_van_vien','auto')],'lo'],
- gap:[`<p>Giao dịch của bạn đang được giữ, tiền chưa rời ví. Bấm <b>Xác thực khuôn mặt</b>; mình đã báo tư vấn viên ưu tiên${night()?' — ca trực bắt đầu lúc 08:00, nên nếu gấp hãy trả bằng cách khác':', thường khoảng 5 phút'}. Mình không tự cho giao dịch đi được.</p><div class="btns"><button class="btn pri">${N(8)}Xác thực khuôn mặt</button></div>`,
+ gap:[`<p>Giao dịch của bạn đang được giữ, tiền chưa rời ví. Bấm <b>Xác thực khuôn mặt</b>; mình đã báo tư vấn viên ưu tiên${night()?' — ca trực bắt đầu lúc 08:00, nên nếu gấp hãy trả bằng cách khác':', thường khoảng 5 phút'}. Mình không tự cho giao dịch đi được.</p><div class="btns"><button class="btn pri" onclick="act('labVerify')">${N(8)}Xác thực khuôn mặt</button></div>`,
    [T('yeu_cau_xac_minh','auto'),T('chuyen_tu_van_vien','auto'),T('de_xuat_nha','auto'),T('nha_giao_dich','no')],'lo'],
- khoathe:[`<p>Trong chat mình không khoá riêng thẻ ngân hàng được. Cách nhanh nhất: gọi tổng đài của <b>ngân hàng phát hành thẻ</b> (số in mặt sau thẻ). Bạn có cần khoá <b>cả ví</b> không? Khoá ví thì mở lại phải gọi tổng đài, mất nhiều giờ.</p><div class="btns"><button class="btn" onclick="act('lockAsk')">${N(9)}Có, khoá cả ví</button><button class="btn">Không, chỉ cần khoá thẻ</button></div>${S.lockAsk&&!S.locked?lockCard():''}`,
+ khoathe:[`<p>Trong chat mình không khoá riêng thẻ ngân hàng được. Cách nhanh nhất: gọi tổng đài của <b>ngân hàng phát hành thẻ</b> (số in mặt sau thẻ). Bạn có cần khoá <b>cả ví</b> không? Khoá ví thì mở lại phải gọi tổng đài, mất nhiều giờ.</p><div class="btns"><button class="btn" onclick="act('lockAsk')">${N(9)}Có, khoá cả ví</button><button class="btn" onclick="act('cardOnly')">Không, chỉ cần khoá thẻ</button></div>${LK()}`,
    [T('khoa_vi','ask')],'lo'],
- khoavi:[`<p>Mình khoá được cả ví cho bạn sau khi bạn xác nhận. Lưu ý: mở lại phải gọi tổng đài, mất nhiều giờ.</p><div class="btns"><button class="btn" onclick="act('lockAsk')">${N(9)}Khoá ví</button></div>${S.lockAsk&&!S.locked?lockCard():''}`,[T('khoa_vi','ask')],'lo'],
+ khoavi:[`<p>Mình khoá được cả ví cho bạn sau khi bạn xác nhận. Lưu ý: mở lại phải gọi tổng đài, mất nhiều giờ.</p><div class="btns"><button class="btn" onclick="act('lockAsk')">${N(9)}Khoá ví</button></div>${LK()}`,[T('khoa_vi','ask')],'lo'],
  hoan:[`<p>Nếu giao dịch đã hoàn tất, chat không lấy lại được và mình không hứa hoàn tiền. Bạn mở <b>Tôi → Đăng nhập và bảo mật → Phản ánh giao dịch rủi ro</b>. Bạn có thấy đổi mật khẩu hay đăng nhập trên máy lạ không?</p>`,[T('chuyen_tu_van_vien','auto')],'lo'],
  nguoi:[`<p>Mình chuyển bạn tới tư vấn viên ngay${night()?' — ca trực bắt đầu lúc 08:00; nếu khẩn cấp về lừa đảo, gọi tổng đài '+HOTLINE:''}. Tư vấn viên thấy sẵn đoạn chat này, bạn không phải kể lại.</p>`,[T('chuyen_tu_van_vien','auto')],'ok'],
  rut:[`<p>${N(8)}Mình hỏi một câu để không đoán sai: bạn thấy khoản trừ trong <b>Lịch sử giao dịch</b>, hay nhận tin nhắn / cuộc gọi báo trừ tiền?</p><div class="btns"><button class="btn" onclick="labSend('Mình thấy trong lịch sử giao dịch, mình đâu có làm')">Trong lịch sử giao dịch</button><button class="btn" onclick="labSend('Có người gọi điện báo, bảo mình xác minh hồ sơ')">Có người gọi / nhắn báo</button></div>`,[],'lo'],
@@ -251,8 +254,8 @@ function reply(c){
 }
 function labPhone(){
  let h=S.lab.length?'':`<div class="ai"><div class="who">${N(1)}<b>Trợ lý AI của Ví Mẫu</b></div><p>Chào bạn, mình là trợ lý AI. Bạn cần hỗ trợ gì về giao dịch?</p></div>`;
- S.lab.forEach(m=>{h+=me(m.t)+reply(m.c)});
- S.log.forEach(x=>h+=x);
+ let lastQ=-1;S.lab.forEach((m,i)=>{if(!m.sys)lastQ=i});
+ S.lab.forEach((m,i)=>{if(m.sys){h+=m.sys;return}isLast=(i===lastQ);h+=me(m.t)+reply(m.c);isLast=false});
  return h;
 }
 function labSend(t){t=(t||'').trim();if(!t)return;const c=classify(t);S.lab.push({t,c});S.lockAsk=false;
@@ -297,27 +300,32 @@ function consoleHTML(){
 /* ---------- actions ---------- */
 function act(a){
  const sc=S.sc;
- if(a==='hungup'){S.log.push(me('Mình đã cúp máy rồi')+ai(`<p>Bạn làm đúng rồi. Tiền 48.000.000đ vẫn ở trong ví. Tư vấn viên sẽ gọi bạn qua số đã đăng ký${night()?' khi vào ca lúc 08:00':''}. Nếu ai gọi xưng là Ví Mẫu mà bảo bạn chuyển tiền hay đọc mã OTP, người đó không phải tư vấn viên.</p>`,'','ok'))}
- if(a==='hotline'){S.log.push(ai(`<p>${N(7)}Tổng đài cảnh báo lừa đảo của Ví Mẫu: <b>${HOTLINE}</b>. Giao dịch vẫn được giữ trong lúc bạn gọi.</p>`))}
- if(a==='object'){S.objected=true;S.log.push(me('Mình không bị lừa, nhả đi mà, người ta đang chờ')+ai(`<p>Mình hiểu bạn đang bị giục. Mình đã gửi lời bạn cho tư vấn viên — họ sẽ gọi lại qua số đã đăng ký và quyết trong cuộc gọi đó. Mình không tự nhả được, kể cả khi bạn đã quét mặt.</p><p>Bạn thấy mình hiểu sai chỗ nào? <button class="btn sm">Người gọi là người quen</button> <button class="btn sm">Đây là giao dịch của mình</button> <button class="btn sm">Khác</button></p>`,'Mình vẫn chưa chắc giao dịch này an toàn','hi'))}
+ if(a==='wrong'){push(ai(`<p>Bạn thấy mình hiểu sai chỗ nào? Ý của bạn sẽ được gửi kèm cho tư vấn viên.</p><div class="btns"><button class="btn sm" onclick="act('fbSent')">Người gọi là người quen</button><button class="btn sm" onclick="act('fbSent')">Đây là giao dịch của mình</button><button class="btn sm" onclick="act('fbSent')">Khác</button></div>`))}
+ if(a==='fbSent'){push(ai('<p>Cảm ơn bạn, mình đã ghi ý này để tư vấn viên và đội sản phẩm xem lại. Giao dịch đang giữ vẫn do tư vấn viên quyết.</p>','','ok'))}
+ if(a==='labVerify'){push(ai('<p>Đã xác thực. Kết quả này được gửi cho tư vấn viên; mình vẫn không tự cho giao dịch đi.</p>','','ok'))}
+ if(a==='mockReport'){push(ai('<p>(Prototype) Đây là chỗ mở màn <b>Phản ánh giao dịch rủi ro</b> — nằm ngoài 2 màn hình của bài.</p>','','ok'))}
+ if(a==='cardOnly'){push(ai('<p>Vậy ví của bạn vẫn dùng bình thường. Bạn gọi số in ở mặt sau thẻ để ngân hàng khoá thẻ nhé.</p>','','ok'))}
+ if(a==='hungup'){push(me('Mình đã cúp máy rồi')+ai(`<p>Bạn làm đúng rồi. Tiền 48.000.000đ vẫn ở trong ví. Tư vấn viên sẽ gọi bạn qua số đã đăng ký${night()?' khi vào ca lúc 08:00':''}. Nếu ai gọi xưng là Ví Mẫu mà bảo bạn chuyển tiền hay đọc mã OTP, người đó không phải tư vấn viên.</p>`,'','ok'))}
+ if(a==='hotline'){push(ai(`<p>${N(7)}Tổng đài cảnh báo lừa đảo của Ví Mẫu: <b>${HOTLINE}</b>. Giao dịch vẫn được giữ trong lúc bạn gọi.</p>`))}
+ if(a==='object'){S.objected=true;push(me('Mình không bị lừa, nhả đi mà, người ta đang chờ')+ai(`<p>Mình hiểu bạn đang bị giục. Mình đã gửi lời bạn cho tư vấn viên — họ sẽ gọi lại qua số đã đăng ký và quyết trong cuộc gọi đó. Mình không tự nhả được, kể cả khi bạn đã quét mặt.</p><p>Bạn thấy mình hiểu sai chỗ nào? <button class="btn sm" onclick="act('fbSent')">Người gọi là người quen</button> <button class="btn sm" onclick="act('fbSent')">Đây là giao dịch của mình</button> <button class="btn sm" onclick="act('fbSent')">Khác</button></p>`,'Mình vẫn chưa chắc giao dịch này an toàn','hi'))}
  if(a==='lockAsk'){S.lockAsk=true}
- if(a==='lockNo'){S.lockAsk=false;S.log.push(ai('<p>Mình chưa khoá ví. Bạn có thể khoá bất cứ lúc nào trong chat này.</p>','','ok'))}
- if(a==='lock'){S.lockAsk=false;S.locked=true;S.log.push(ai(`<p>Đã <b>khoá ví</b> lúc ${night()?'23:49':'15:04'}. Mọi giao dịch dừng. Mở lại: gọi tổng đài ${HOTLINE}.</p>`,'','ok'))}
+ if(a==='lockNo'){S.lockAsk=false;push(ai('<p>Mình chưa khoá ví. Bạn có thể khoá bất cứ lúc nào trong chat này.</p>','','ok'))}
+ if(a==='lock'){S.lockAsk=false;S.locked=true;push(ai(`<p>Đã <b>khoá ví</b> lúc ${night()?'23:49':'15:04'}. Mọi giao dịch dừng. Mở lại: gọi tổng đài ${HOTLINE}.</p>`,'','ok'))}
  if(a==='cancelQ'){S.cancelQ=true}
  if(a==='requeue'){S.cancelQ=false;if(sc==='lab'&&!S.labStaff){S.labStaff={cat:'khac',words:[]};S.lab.push({t:'Cho mình gặp tư vấn viên',c:{cat:'khac',hit:{},words:[],than:false}})}}
- if(a==='verify'){S.verifying=true;render();setTimeout(()=>{S.verifying=false;S.verified=true;S.log.push(ai(`<p>Đã xác thực. ${night()?'Sáng mai tư vấn viên sẽ xử lý trước tiên.':'Tư vấn viên đang xem — bạn không cần làm gì thêm.'}</p>`,'','ok'));render()},700);return}
- if(a==='paidOther'){S.paidOther=true;S.log.push(me('Mình trả bằng thẻ rồi')+ai('<p>Đã báo tư vấn viên <b>không cho giao dịch này đi</b>. 12.400.000đ vẫn ở trong ví của bạn.</p>','','ok'))}
- if(a==='staffRelease'){S.staff='release';S.log.push(ai(sc==='s1'?'<p>Tư vấn viên đã cho giao dịch đi lúc 15:09, sau khi gọi xác nhận với bạn qua số đã đăng ký.</p>':'<p><b>Xong rồi</b> — giao dịch đã đi tới Bệnh viện Mẫu lúc 15:07. Bạn đưa màn hình này cho quầy thu ngân.</p>','','ok')+fb())}
- if(a==='staffDeny'){S.staff='deny';S.log.push(ai(sc==='s1'?'<p>Tư vấn viên đã quyết định <b>không cho giao dịch đi</b>. 48.000.000đ vẫn ở trong ví. Nếu bạn đã lỡ đọc mã hay mật khẩu cho người gọi, hãy khoá ví.</p><div class="btns"><button class="btn" onclick="act(\'lockAsk\')">Khoá ví</button></div>':'<p>Tư vấn viên chưa cho giao dịch đi và sẽ gọi bạn qua số đã đăng ký. Tiền vẫn ở trong ví.</p>','','ok')+fb())}
- if(a==='staffLock'){S.staff='lock';S.locked=true;S.log.push(ai('<p>Theo yêu cầu của bạn qua điện thoại, tư vấn viên đã <b>khoá ví</b>. Giao dịch 48.000.000đ không đi. Mở lại: gọi tổng đài.</p>','','ok'))}
+ if(a==='verify'){S.verifying=true;render();setTimeout(()=>{S.verifying=false;S.verified=true;push(ai(`<p>Đã xác thực. ${night()?'Sáng mai tư vấn viên sẽ xử lý trước tiên.':'Tư vấn viên đang xem — bạn không cần làm gì thêm.'}</p>`,'','ok'));render()},700);return}
+ if(a==='paidOther'){S.paidOther=true;push(me('Mình trả bằng thẻ rồi')+ai('<p>Đã báo tư vấn viên <b>không cho giao dịch này đi</b>. 12.400.000đ vẫn ở trong ví của bạn.</p>','','ok'))}
+ if(a==='staffRelease'){S.staff='release';push(ai(sc==='s1'?'<p>Tư vấn viên đã cho giao dịch đi lúc 15:09, sau khi gọi xác nhận với bạn qua số đã đăng ký.</p>':'<p><b>Xong rồi</b> — giao dịch đã đi tới Bệnh viện Mẫu lúc 15:07. Bạn đưa màn hình này cho quầy thu ngân.</p>','','ok')+fb())}
+ if(a==='staffDeny'){S.staff='deny';push(ai(sc==='s1'?'<p>Tư vấn viên đã quyết định <b>không cho giao dịch đi</b>. 48.000.000đ vẫn ở trong ví. Nếu bạn đã lỡ đọc mã hay mật khẩu cho người gọi, hãy khoá ví.</p><div class="btns"><button class="btn" onclick="act(\'lockAsk\')">Khoá ví</button></div>':'<p>Tư vấn viên chưa cho giao dịch đi và sẽ gọi bạn qua số đã đăng ký. Tiền vẫn ở trong ví.</p>','','ok')+fb())}
+ if(a==='staffLock'){S.staff='lock';S.locked=true;push(ai('<p>Theo yêu cầu của bạn qua điện thoại, tư vấn viên đã <b>khoá ví</b>. Giao dịch 48.000.000đ không đi. Mở lại: gọi tổng đài.</p>','','ok'))}
  render();
 }
-function fb(){return `<div class="fb">${N(4)}Trợ lý giúp được không? <button class="btn">Có</button> <button class="btn">Sai chỗ nào?</button></div>`}
+function fb(){return `<div class="fb">${N(4)}Trợ lý giúp được không? <button class="btn" onclick="act('fbSent')">Có</button> <button class="btn" onclick="act('wrong')">Sai chỗ nào?</button></div>`}
 
 /* ---------- tools + legend ---------- */
 const TOOLS=[
  ['giu_giao_dich','auto','Tự làm','Không giữ thì tiền đi trong vài giây (S1). Giữ nhầm chỉ làm chậm vài phút (S2). Gỡ giữ = nhả, nên đường lui là nhờ tư vấn viên xem lại.'],
- ['yeu_cau_xac_minh','auto','Tự làm','Rẻ, khách gạt được. Kết quả khớp KHÔNG phải điều kiện để nhả: nạn nhân vẫn quét mặt đúng.'],
+ ['yeu_cau_xac_minh','auto','Tự làm','Rẻ, không bắt buộc: khách không bấm thì tư vấn viên vẫn xem ca. Kết quả khớp KHÔNG phải điều kiện để nhả: nạn nhân vẫn quét mặt đúng.'],
  ['chuyen_tu_van_vien','auto','Tự làm','Chuyển thừa chỉ tốn công tư vấn viên; khách huỷ được. Luôn chuyển khi nghi lừa, chiếm tài khoản, đang gấp.'],
  ['de_xuat_nha','auto','Tự làm (tool mới)','Chỉ soạn đề xuất + bằng chứng cho tư vấn viên. Không di chuyển tiền.'],
  ['nha_giao_dich','ask','Cần TƯ VẤN VIÊN duyệt · AI và khách không có nút','Không đảo được. Khách không thể là người duyệt: người bị lừa vẫn bấm xác nhận. Quá hạn thì giữ, không tự nhả.'],
@@ -363,5 +371,6 @@ document.querySelectorAll('[data-sc]').forEach(b=>b.onclick=()=>{S=fresh(b.datas
 document.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>{S=fresh(S.sc,b.dataset.t);sec=300;render()});
 $('#reset').onclick=()=>{S=fresh(S.sc,S.t);sec=300;render()};
 $('#annT').onchange=e=>document.body.classList.toggle('hide-n',!e.target.checked);
+window.addEventListener('hashchange',load);
 load();
 </script></body></html>

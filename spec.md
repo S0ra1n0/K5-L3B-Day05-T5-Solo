@@ -86,7 +86,7 @@ Bốn đường đi: happy path (S11) · low-confidence (S2, S4) · failure / kh
 
 **Người dùng làm gì tiếp:** "Mình đã cúp máy" · "Gọi tổng đài cảnh báo lừa đảo" · "Mình không bị lừa — gửi thêm cho tư vấn viên" (sửa AI, nhưng đi tới người, không nhả) · "Khoá ví" (có hộp xác nhận). **Nếu không làm gì:** giao dịch giữ nguyên, **không bao giờ tự nhả khi hết giờ**.
 
-**Ai được báo, sau bao lâu:** tư vấn viên, ngay lập tức, xếp **ưu tiên cao — nghi lừa đảo mạo danh**; trong giờ trực mục tiêu gọi lại ≤ 5 phút. Tư vấn viên thấy: tóm tắt chat, lời khách, kết quả xác thực (khớp — và ghi chú "khớp không có nghĩa là an toàn"), người nhận mới, khuyến nghị của AI "không nhả", độ chắc. Ngoài giờ (8h–20h): giữ tới ca sáng, khách được đưa tổng đài cảnh báo lừa đảo.
+**Ai được báo, sau bao lâu:** tư vấn viên, ngay lập tức, xếp **ưu tiên cao — nghi lừa đảo mạo danh**; trong giờ trực mục tiêu gọi lại ≤ 5 phút. Tư vấn viên thấy: tóm tắt chat, lời khách, kết quả xác thực (khớp — và ghi chú "khớp không có nghĩa là an toàn"), người nhận mới, khuyến nghị của AI "không nhả", độ chắc. Ngoài giờ trực (8h–20h): giữ tới ca sáng, khách được đưa tổng đài cảnh báo lừa đảo.
 
 **Loại lỗi: lỗi ngữ cảnh** (PAIR *context error*). Xác thực khuôn mặt chạy **đúng thiết kế** — đúng là chính chủ bấm — nhưng sai với tình huống: chính chủ đang bị điều khiển. Vì là lỗi ngữ cảnh nên không xin lỗi kiểu "hệ thống trục trặc" và cũng không trách người dùng ("bạn bị lừa rồi"); cách nói là **nêu mẫu lừa đảo công khai** (công an không đòi chuyển tiền) để người dùng tự nhận ra. Cách sửa là **sửa thiết kế**: bỏ "xác thực đúng" khỏi điều kiện nhả.
 
@@ -126,13 +126,13 @@ Tin thứ hai (dự phòng):
 
 ## §4. Mức tự chủ
 
-Nhóm thêm **1 tool tách bước**: `de_xuat_nha` — AI soạn đề xuất nhả/không nhả kèm bằng chứng gửi tư vấn viên. Tách "soạn đề xuất" khỏi "cho tiền đi" (giống "soạn sẵn" tách khỏi "gửi đi" trong đề).
+Bài thêm **1 tool tách bước**: `de_xuat_nha` — AI soạn đề xuất nhả/không nhả kèm bằng chứng gửi tư vấn viên. Tách "soạn đề xuất" khỏi "cho tiền đi" (giống "soạn sẵn" tách khỏi "gửi đi" trong đề).
 
 | Tool | Mức | Ai duyệt · thấy gì · quá hạn thì sao | Sai thì ai chịu gì · đảo được không · chờ người thì mất gì | Phương án đã loại |
 |---|---|---|---|---|
-| `giu_giao_dich` | **Tự làm** | — Đường lui: "Nhờ tư vấn viên xem lại" (khách không tự gỡ được, vì gỡ giữ = nhả). | Giữ nhầm: người thật mất vài phút (S2), đảo được. Không giữ: S1 mất 48 triệu trong vài giây. **Chờ người duyệt việc giữ = tiền đã đi trước khi có ai duyệt** → chờ đắt hơn làm sai. | *Cần duyệt*: loại vì cửa sổ vài giây. |
-| `yeu_cau_xac_minh` | **Tự làm** | — Khách gạt bỏ được ("Để sau"). | Gửi thừa: một màn hình phiền, đảo được. **Luật thêm:** kết quả xác thực **không** bao giờ là điều kiện đủ để nhả (S1: nạn nhân quét mặt đúng). | *Cấm*: loại, người gấp (S2) cần đúng bước này. |
-| `chuyen_tu_van_vien` | **Tự làm** | — Khách huỷ được ("Thôi, mình hỏi tiếp"). **Luôn chuyển** khi có dấu hiệu lừa (S1, S8), chiếm tài khoản (S7), người thân nhắn thay (S9), khách gấp (S2). Ngoài giờ: xếp hàng tới 8h + đưa tổng đài. | Chuyển thừa: tốn vài phút công tư vấn viên. Không chuyển: người gấp bị bỏ lơ, người bị lừa không gặp người thật. | *Cần duyệt*: loại, thêm một bước cho người đang gấp. |
+| `giu_giao_dich` | **Tự làm** | — Đường lui: khách bấm "Mình không bị lừa — gửi thêm cho tư vấn viên" để tư vấn viên xem lại (khách không tự gỡ được, vì gỡ giữ = nhả). | Giữ nhầm: người thật mất vài phút (S2), đảo được. Không giữ: S1 mất 48 triệu trong vài giây. **Chờ người duyệt việc giữ = tiền đã đi trước khi có ai duyệt** → chờ đắt hơn làm sai. | *Cần duyệt*: loại vì cửa sổ vài giây. |
+| `yeu_cau_xac_minh` | **Tự làm** | — Không bắt buộc: khách không bấm thì tư vấn viên vẫn xem ca. | Gửi thừa: một màn hình phiền, đảo được. **Luật thêm:** kết quả xác thực **không** bao giờ là điều kiện đủ để nhả (S1: nạn nhân quét mặt đúng). | *Cấm*: loại, người gấp (S2) cần đúng bước này. |
+| `chuyen_tu_van_vien` | **Tự làm** | — Khách huỷ được ("Huỷ chuyển"); giao dịch vẫn giữ. **Luôn chuyển** khi có dấu hiệu lừa (S1, S8), chiếm tài khoản (S7), người thân nhắn thay (S9), khách gấp (S2). Ngoài giờ: xếp hàng tới 8h + đưa tổng đài. | Chuyển thừa: tốn vài phút công tư vấn viên. Không chuyển: người gấp bị bỏ lơ, người bị lừa không gặp người thật. | *Cần duyệt*: loại, thêm một bước cho người đang gấp. |
 | `de_xuat_nha` *(mới)* | **Tự làm** | Tư vấn viên đọc. | Đề xuất sai: tư vấn viên vẫn là người quyết, có bằng chứng để tự kiểm. Không di chuyển tiền. | — |
 | `nha_giao_dich` | **Cần người duyệt — người duyệt là TƯ VẤN VIÊN, không phải khách.** AI **cấm** gọi; khách **không có nút**. | Tư vấn viên thấy: tóm tắt chat, lời khách, kết quả xác thực, người nhận mới/đã đăng ký, khuyến nghị + độ chắc của AI. **Luật thêm:** ca nghi lừa → phải gọi lại qua số đăng ký trước khi được bấm nhả (ô tích bắt buộc). **Quá hạn:** giao dịch giữ nguyên, **không bao giờ tự nhả**; khách được báo giờ tư vấn viên vào ca và đường dự phòng. | **Không đảo được**, tiền đi trong vài giây. Nhả nhầm: khách mất toàn bộ (S1). Chờ người: người gấp mất ~5 phút trong giờ trực, nhiều giờ ngoài giờ (S2, S3). | Xem "tool khó xếp nhất". |
 | `khoa_vi` | **Cần người duyệt — chính chủ** bấm trong hộp xác nhận (tư vấn viên cũng khoá được) | Hộp xác nhận nói rõ: khoá cả ví, mở lại phải gọi tổng đài, mất nhiều giờ, không khoá riêng thẻ. Khi có dấu hiệu chiếm tài khoản (S7), nút "Khoá ví ngay" lên đầu. Không ai bấm: chuyển tư vấn viên quyết. | Khoá nhầm: khách mất dùng ví nhiều giờ (S4, S5 — khách chỉ muốn khoá thẻ). Không khoá kịp: S7 mất số dư. Một lần bấm xác nhận ≈ 2 giây, chặn được khoá nhầm. | *Tự làm*: loại vì S4/S5 mơ hồ → khoá nhầm. *Cấm*: loại vì S7 cần khoá trong vài giây, gọi tổng đài chậm hơn. |
@@ -177,13 +177,13 @@ Tool khó thứ hai là `khoa_vi` (S7 cần nhanh, S4/S5 dễ khoá nhầm); ch�
 |---|---|---|---|
 | ❶ | Nhãn "Trợ lý AI của Ví Mẫu" + chip "Mình chưa chắc…" | G2 (+ Luật AI Đ11) | — |
 | ❷ | Dòng "Dựa vào": chỉ lời khách nhắn + thông tin công khai về người nhận | G11 + PAIR Explainability | — |
-| ❸ | Dòng trạng thái "Đã giữ giao dịch · Đã chuyển tư vấn viên" + nút "Nhờ xem lại" / "Huỷ chuyển" | PAIR Feedback & Control | **Tự làm** + đường lui |
+| ❸ | Dòng trạng thái "Đã giữ giao dịch · Đã chuyển tư vấn viên" + nút "Huỷ chuyển" | PAIR Feedback & Control | **Tự làm** + đường lui |
 | ❹ | Nút "Mình không bị lừa — gửi thêm cho tư vấn viên" và "Sai chỗ nào?" | G9 + G15 | Sửa AI nhưng không nhả |
 | ❺ | Ô "Chỉ tư vấn viên cho giao dịch đi được" — **không có nút nhả** phía khách | G1 (làm rõ hệ thống làm được gì) | **Cấm** với AI và khách |
 | ❻ | Bàn tư vấn viên: đề xuất của AI + độ chắc + tín hiệu + ô tích "đã gọi lại qua số đăng ký" + nút Nhả / Không nhả | PAIR Explainability (cho nhân viên) | **Cần người duyệt** |
 | ❼ | Đường lui: gọi tổng đài, "Mình đã trả cách khác", báo giờ vào ca khi ngoài giờ | PAIR Errors + Graceful Failure | — |
 | ❽ | S2: chỉ một nút chính "Xác thực khuôn mặt" + thanh 2 bước có đồng hồ | G10 | Tự làm (`yeu_cau_xac_minh`) |
-| ❾ | Hộp xác nhận khoá ví nói rõ hậu quả | G8/G9 (dễ gạt bỏ) | **Cần chính chủ duyệt** |
+| ❾ | Hộp xác nhận khoá ví nói rõ hậu quả | G8 (gạt bỏ dễ: "Không khoá") | **Cần chính chủ duyệt** |
 
 **Quyết định cách hiện:**
 - *Độ chắc:* chọn **câu chữ** ("Mình chưa chắc giao dịch này an toàn") thay cho thanh % hay đèn xanh/đỏ. Loại thanh %: người đang hoảng đọc "62%" không biết làm gì; con số còn gợi ý cho kẻ lừa biết sắp qua ngưỡng. Phía tư vấn viên thì dùng **mức chữ (cao/trung bình/thấp) kèm danh sách tín hiệu**, vì nhân viên cần căn cứ để quyết.
